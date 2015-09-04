@@ -1,0 +1,63 @@
+<?xml version="1.0"?>  
+<configuration>  
+	<property name="customerLogPath" value="log/customer/" /> 
+	<property name="systemLogPath" value="log/system/" /> 
+	<!-- 机器的ip地址 -->
+	<property name="machineIp" value="111" /> 
+    <timestamp key="byDay" datePattern="yyyyMMdd"/>
+  
+  
+    <!-- 控制台 -->
+    <appender name="console" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger - %msg%n</pattern>
+        </encoder>
+    </appender>
+     
+     
+     <!-- 系统日志 appender  -->
+    <appender name="SystemLog" class="ch.qos.logback.core.rolling.RollingFileAppender">
+    	<Encoding>UTF-8</Encoding>  
+        <File>${systemLogPath}/systemLog.log</File>  
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <!-- 按天回滚 daily -->
+            <!-- log.dir 在maven profile里配置 -->
+            <fileNamePattern>${systemLogPath}/systemLog-%d{yyyy-MM-dd}.log</fileNamePattern>
+            <!-- 日志最大的历史 60天 -->
+            <maxHistory>30</maxHistory>
+        </rollingPolicy>
+        <encoder>
+            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS}  %-5level %logger - %msg%n</pattern>
+        </encoder>
+    </appender>
+    
+    <!-- 用户自定义日志 appender  -->
+    <appender name="CustomerLog" class="ch.qos.logback.core.rolling.RollingFileAppender">
+    	<Encoding>UTF-8</Encoding>  
+        <File>${customerLogPath}/customerLog_ndisi_${machineIp}.log</File>  
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <!-- 每天一个文件 -->
+            <fileNamePattern>${customerLogPath}/%d{yyyy-MM-dd}_${machineIp}.log</fileNamePattern>
+            <!-- 日志最大的历史 90天 -->
+            <maxHistory>90</maxHistory>
+        </rollingPolicy>
+        <encoder>
+            <pattern>%msg%n</pattern>
+        </encoder>
+    </appender>
+  
+    <!--SystemLog -->
+    <logger name="SystemLog" level="debug">
+        <appender-ref ref="SystemLog"/>
+    </logger>
+    <!--用户自定义日志-->
+    <logger name="CustomerLog" level="info" addtivity="false">
+        <appender-ref ref="CustomerLog"/>
+    </logger>
+  	
+  	
+  	<root addtivity="false">
+	    <appender-ref ref="console" level="info"/>
+	     <appender-ref ref="SystemLog" level="info"/>
+	 </root> 
+</configuration>
